@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="animate-on-load">Climate Champion Programme 2025</h1>
+                <p class="animate-on-load">Join the movement to create a sustainable future. Anant School for Climate Action invites students across India to become Climate Champions.</p>
+                <div class="animate-on-load">
+                    {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('register_participant') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    {% else %}
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-light btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('participant_dashboard') }}" class="btn btn-light btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-earth-americas" style="font-size: 15rem; color: rgba(255,255,255,0.2);"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="mb-4">Programme Overview</h2>
+                <p class="lead">A one-year initiative to galvanise youth towards climate awareness and action, nurturing a generation of proactive stewards for our planet.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Workshops</h4>
+                    <p>Participate in comprehensive workshops focusing on Mission LiFE and Climate Change strategies.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h4>Idea Contest</h4>
+                    <p>Showcase innovative solutions to climate change through AARAMBH's Idea Contest platform.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h4>Summer Internship</h4>
+                    <p>Gain practical experience with summer internships at Anant School of Climate Action.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>Certification</h4>
+                    <p>Receive recognition for your commitment to climate awareness and action.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>Programme Timeline</h3>
+                <div class="timeline mt-4">
+                    <div class="timeline-item">
+                        <h5><i class="fas fa-calendar-alt me-2"></i>April - July 2025</h5>
+                        <p>Registration period for schools and Climate Champions</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5><i class="fas fa-rocket me-2"></i>July 28, 2025</h5>
+                        <p>Induction programme and official commencement</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5><i class="fas fa-chart-line me-2"></i>Aug - Sep 2025</h5>
+                        <p>First quarterly reports and initial workshops</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5><i class="fas fa-trophy me-2"></i>April 22, 2026</h5>
+                        <p>Award ceremony on Earth Day</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3>Benefits for Schools</h3>
+                <ul class="list-unstyled mt-4">
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-3"></i>
+                        <strong>Recognition:</strong> Special mentions in posts and advertisements
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-3"></i>
+                        <strong>Awards:</strong> 'Climate Aware School in India' title for outstanding schools
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-3"></i>
+                        <strong>Opportunities:</strong> Access to Mission LiFE events and workshops
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle text-success me-3"></i>
+                        <strong>Network:</strong> Connect with other climate-conscious schools
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <h3 class="mb-4">Ready to Make a Difference?</h3>
+        <p class="lead mb-4">Join thousands of students across India in the fight against climate change</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register_participant') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-leaf me-2"></i>Become a Climate Champion
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add animation on scroll
+    window.addEventListener('load', function() {
+        const elements = document.querySelectorAll('.animate-on-load');
+        elements.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+    });
+</script>
+{% endblock %}
