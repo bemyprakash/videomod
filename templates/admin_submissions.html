@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Submissions - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-file-alt me-3"></i>Manage Submissions
+        </h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ submissions|length }}</div>
+            <div class="stat-label">Total Submissions</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-dark">
+            <div class="stat-number">{{ submissions|rejectattr('is_evaluated')|list|length }}</div>
+            <div class="stat-label">Pending Review</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <div class="stat-number">{{ submissions|selectattr('is_evaluated')|list|length }}</div>
+            <div class="stat-label">Evaluated</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info">
+            <div class="stat-number">{{ ((submissions|selectattr('is_evaluated')|map(attribute='score')|sum) / submissions|selectattr('is_evaluated')|list|length)|round(1) if submissions|selectattr('is_evaluated')|list|length > 0 else 0 }}</div>
+            <div class="stat-label">Average Score</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>All Submissions</h3>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" onclick="filterSubmissions('all')">All</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filterSubmissions('pending')">Pending</button>
+                    <button type="button" class="btn btn-outline-success" onclick="filterSubmissions('evaluated')">Evaluated</button>
+                </div>
+            </div>
+            
+            {% if submissions %}
+                {% for submission in submissions %}
+                    <div class="submission-card" data-status="{{ 'evaluated' if submission.is_evaluated else 'pending' }}">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="mb-2">{{ submission.title }}</h5>
+                                <p class="text-muted mb-2">{{ submission.description[:120] }}{% if submission.description|length > 120 %}...{% endif %}</p>
+                                <div class="mb-2">
+                                    <span class="badge bg-info me-2">{{ submission.submission_type.replace('_', ' ').title() }}</span>
+                                    <small class="text-muted">
+                                        by <strong>{{ submission.user.student_name }}</strong> from {{ submission.school.name }}
+                                    </small>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ submission.submission_date.strftime('%B %d, %Y at %I:%M %p') }}
+                                </small>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                {% if submission.is_evaluated %}
+                                    <div class="status-badge status-evaluated mb-2">
+                                        <i class="fas fa-check-circle me-1"></i>Evaluated
+                                    </div>
+                                    <h4 class="mb-0">{{ submission.score }}/100</h4>
+                                    <small class="text-muted">
+                                        by {{ submission.evaluator.admin_name if submission.evaluator else 'Unknown' }}
+                                    </small>
+                                {% else %}
+                                    <span class="status-badge status-pending">
+                                        <i class="fas fa-clock me-1"></i>Pending Review
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('download_file', submission_id=submission.id) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Download Document
+                                    </a>
+                                    {% if not submission.is_evaluated %}
+                                        <a href="{{ url_for('evaluate_submission', submission_id=submission.id) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-star me-1"></i>Evaluate Submission
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('evaluate_submission', submission_id=submission.id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit me-1"></i>Update Evaluation
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if submission.is_evaluated and submission.feedback %}
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6><i class="fas fa-comment me-2"></i>Feedback:</h6>
+                                <p class="mb-0">{{ submission.feedback }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-file-alt feature-icon text-muted"></i>
+                    <h4 class="text-muted">No submissions yet</h4>
+                    <p class="text-muted">Submissions will appear here as participants upload their documents.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function filterSubmissions(status) {
+        const submissions = document.querySelectorAll('.submission-card');
+        const buttons = document.querySelectorAll('.btn-group .btn');
+        
+        // Reset button states
+        buttons.forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary', 'btn-outline-warning', 'btn-outline-success');
+        });
+        
+        // Set active button
+        event.target.classList.remove('btn-outline-primary', 'btn-outline-warning', 'btn-outline-success');
+        event.target.classList.add('btn-primary');
+        
+        submissions.forEach(card => {
+            if (status === 'all') {
+                card.style.display = 'block';
+            } else {
+                const cardStatus = card.getAttribute('data-status');
+                card.style.display = cardStatus === status ? 'block' : 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}
