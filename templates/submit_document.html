@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Document - Climate Champion Programme{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="form-container">
+            <div class="text-center mb-4">
+                <i class="fas fa-file-upload feature-icon"></i>
+                <h2>Submit Your Document</h2>
+                <p class="text-muted">Share your climate action initiative with us</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label for="submission_type" class="form-label">
+                        <i class="fas fa-list me-2"></i>Submission Type
+                    </label>
+                    {{ form.submission_type(class="form-select") }}
+                    {% if form.submission_type.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.submission_type.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="form-text">
+                        <small>Choose the type of document you're submitting</small>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="title" class="form-label">
+                        <i class="fas fa-heading me-2"></i>Title
+                    </label>
+                    {{ form.title(class="form-control", placeholder="Enter a descriptive title for your submission") }}
+                    {% if form.title.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.title.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">
+                        <i class="fas fa-align-left me-2"></i>Description
+                    </label>
+                    {{ form.description(class="form-control", rows="4", placeholder="Provide a detailed description of your submission, including objectives, methodology, and expected outcomes") }}
+                    {% if form.description.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.description.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="file" class="form-label">
+                        <i class="fas fa-paperclip me-2"></i>Upload Document
+                    </label>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h5>Drag & Drop your file here</h5>
+                        <p class="text-muted">or click to browse</p>
+                        {{ form.file(class="d-none", id="fileInput") }}
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                Supported formats: PDF, DOC, DOCX, PPT, PPTX (Max: 16MB)
+                            </small>
+                        </div>
+                    </div>
+                    {% if form.file.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.file.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div id="fileInfo" class="mt-2" style="display: none;"></div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Submission Guidelines:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Ensure your document clearly outlines your climate action initiative</li>
+                        <li>Include data, methodology, and evidence where applicable</li>
+                        <li>For quarterly reports, detail activities completed in the period</li>
+                        <li>For idea contests, focus on innovation and practical implementation</li>
+                    </ul>
+                </div>
+                
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                </div>
+            </form>
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('participant_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // File upload handling
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--dark-green)';
+        uploadArea.style.backgroundColor = '#c3e6cb';
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--primary-green)';
+        uploadArea.style.backgroundColor = 'var(--light-green)';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--primary-green)';
+        uploadArea.style.backgroundColor = 'var(--light-green)';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            displayFileInfo(files[0]);
+        }
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            displayFileInfo(e.target.files[0]);
+        }
+    });
+    
+    function displayFileInfo(file) {
+        const maxSize = 16 * 1024 * 1024; // 16MB
+        const allowedTypes = ['application/pdf', 'application/msword', 
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-powerpoint',
+                            'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+        
+        let statusClass = 'text-success';
+        let statusIcon = 'fa-check-circle';
+        let statusText = 'File ready to upload';
+        
+        if (file.size > maxSize) {
+            statusClass = 'text-danger';
+            statusIcon = 'fa-exclamation-circle';
+            statusText = 'File too large (max 16MB)';
+        } else if (!allowedTypes.includes(file.type)) {
+            statusClass = 'text-warning';
+            statusIcon = 'fa-exclamation-triangle';
+            statusText = 'File type not supported';
+        }
+        
+        fileInfo.innerHTML = `
+            <div class="d-flex align-items-center ${statusClass}">
+                <i class="fas ${statusIcon} me-2"></i>
+                <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                <span class="ms-auto">${statusText}</span>
+            </div>
+        `;
+        fileInfo.style.display = 'block';
+    }
+</script>
+{% endblock %}

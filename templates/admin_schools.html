@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Schools - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-school me-3"></i>Registered Schools
+        </h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ schools|length }}</div>
+            <div class="stat-label">Total Schools</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info">
+            <div class="stat-number">{{ schools|map(attribute='participants')|map('length')|sum }}</div>
+            <div class="stat-label">Total Participants</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <div class="stat-number">{{ schools|map(attribute='submissions')|map('length')|sum }}</div>
+            <div class="stat-label">Total Submissions</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-dark">
+            <div class="stat-number">{{ (schools|map(attribute='participants')|map('length')|sum / schools|length)|round(1) if schools|length > 0 else 0 }}</div>
+            <div class="stat-label">Avg Participants/School</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card">
+            {% if schools %}
+                {% for school in schools %}
+                    <div class="submission-card">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h4 class="mb-2">{{ school.name }}</h4>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ school.address }}, {{ school.city }}, {{ school.state }} - {{ school.pincode }}
+                                </p>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-user-tie me-2"></i>Principal</h6>
+                                        <p class="mb-1">{{ school.principal_name }}</p>
+                                        <small class="text-muted">{{ school.principal_email }}</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-chalkboard-teacher me-2"></i>Faculty Representative</h6>
+                                        <p class="mb-1">{{ school.faculty_name }}</p>
+                                        <small class="text-muted">{{ school.faculty_email }}</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>Registered: {{ school.registration_date.strftime('%B %d, %Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <div class="stat-card bg-primary text-white p-2">
+                                                <div class="stat-number small">{{ school.participants|length }}</div>
+                                                <div class="stat-label small">Participants</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="stat-card bg-success text-white p-2">
+                                                <div class="stat-number small">{{ school.submissions|length }}</div>
+                                                <div class="stat-label small">Submissions</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="stat-card bg-warning text-dark p-2">
+                                                <div class="stat-number small">{{ school.submissions|selectattr('is_evaluated')|map(attribute='score')|sum or 0 }}</div>
+                                                <div class="stat-label small">Total Score</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if school.participants|length > 0 %}
+                                        <div class="mb-2">
+                                            <h6>Participants:</h6>
+                                            {% for participant in school.participants %}
+                                                <span class="badge bg-light text-dark me-1 mb-1">{{ participant.student_name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if school.submissions|length > 0 %}
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6><i class="fas fa-file-alt me-2"></i>Recent Submissions:</h6>
+                                <div class="row">
+                                    {% for submission in school.submissions[:3] %}
+                                        <div class="col-md-4">
+                                            <div class="small">
+                                                <strong>{{ submission.title[:30] }}{% if submission.title|length > 30 %}...{% endif %}</strong><br>
+                                                <span class="text-muted">by {{ submission.user.student_name }}</span><br>
+                                                {% if submission.is_evaluated %}
+                                                    <span class="badge bg-success">{{ submission.score }}/100</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">Pending</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if school.submissions|length > 3 %}
+                                    <small class="text-muted">and {{ school.submissions|length - 3 }} more...</small>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-school feature-icon text-muted"></i>
+                    <h4 class="text-muted">No schools registered yet</h4>
+                    <p class="text-muted">Schools will appear here as participants register.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

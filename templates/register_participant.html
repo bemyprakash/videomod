@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Participant Registration - Climate Champion Programme{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="form-container">
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus feature-icon"></i>
+                <h2>Become a Climate Champion</h2>
+                <p class="text-muted">Join the movement for climate action</p>
+            </div>
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="mb-3"><i class="fas fa-user me-2"></i>Personal Information</h4>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email Address *</label>
+                        {{ form.email(class="form-control", placeholder="your.email@example.com") }}
+                        {% if form.email.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.email.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="student_name" class="form-label">Student Name *</label>
+                        {{ form.student_name(class="form-control", placeholder="Full Name") }}
+                        {% if form.student_name.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.student_name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="grade" class="form-label">Grade/Class *</label>
+                        {{ form.grade(class="form-control", placeholder="e.g., Class 10") }}
+                        {% if form.grade.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.grade.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Phone Number *</label>
+                        {{ form.phone(class="form-control", placeholder="+91 9876543210") }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.phone.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label">Password *</label>
+                        {{ form.password(class="form-control", placeholder="Minimum 6 characters") }}
+                        {% if form.password.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.password.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm password") }}
+                        {% if form.confirm_password.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.confirm_password.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="mb-3"><i class="fas fa-school me-2"></i>School Information</h4>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="school_name" class="form-label">School Name *</label>
+                    {{ form.school_name(class="form-control", placeholder="Name of your school") }}
+                    {% if form.school_name.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.school_name.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="school_address" class="form-label">School Address *</label>
+                    {{ form.school_address(class="form-control", rows="3", placeholder="Complete school address") }}
+                    {% if form.school_address.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.school_address.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="city" class="form-label">City *</label>
+                        {{ form.city(class="form-control", placeholder="City") }}
+                        {% if form.city.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.city.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="state" class="form-label">State *</label>
+                        {{ form.state(class="form-control", placeholder="State") }}
+                        {% if form.state.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.state.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="pincode" class="form-label">Pincode *</label>
+                        {{ form.pincode(class="form-control", placeholder="Pincode") }}
+                        {% if form.pincode.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.pincode.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="principal_name" class="form-label">Principal Name *</label>
+                        {{ form.principal_name(class="form-control", placeholder="Principal's full name") }}
+                        {% if form.principal_name.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.principal_name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="principal_email" class="form-label">Principal Email *</label>
+                        {{ form.principal_email(class="form-control", placeholder="principal@school.edu") }}
+                        {% if form.principal_email.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.principal_email.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="faculty_name" class="form-label">Faculty Representative Name *</label>
+                        {{ form.faculty_name(class="form-control", placeholder="Faculty representative's name") }}
+                        {% if form.faculty_name.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.faculty_name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="faculty_email" class="form-label">Faculty Representative Email *</label>
+                        {{ form.faculty_email(class="form-control", placeholder="faculty@school.edu") }}
+                        {% if form.faculty_email.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.faculty_email.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="d-grid mb-3">
+                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                </div>
+            </form>
+            
+            <div class="text-center">
+                <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

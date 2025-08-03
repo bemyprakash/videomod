@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluate Submission - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="dashboard-card">
+            <h2 class="mb-4">
+                <i class="fas fa-star me-2"></i>Evaluate Submission
+            </h2>
+            
+            <div class="bg-light p-4 rounded mb-4">
+                <h4>{{ submission.title }}</h4>
+                <p class="text-muted mb-3">{{ submission.description }}</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Submitted by:</strong> {{ submission.user.student_name }}<br>
+                        <strong>School:</strong> {{ submission.school.name }}<br>
+                        <strong>Type:</strong> {{ submission.submission_type.replace('_', ' ').title() }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Submission Date:</strong> {{ submission.submission_date.strftime('%B %d, %Y at %I:%M %p') }}<br>
+                        <strong>File:</strong> {{ submission.original_filename }}<br>
+                        <a href="{{ url_for('download_file', submission_id=submission.id) }}" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="fas fa-download me-1"></i>Download Document
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="score" class="form-label">
+                            <i class="fas fa-chart-line me-2"></i>Score (0-100)
+                        </label>
+                        {{ form.score(class="form-control", placeholder="Enter score out of 100", value=submission.score if submission.is_evaluated else '') }}
+                        {% if form.score.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.score.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <small>Rate the submission based on innovation, implementation feasibility, and impact potential.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Score Range Guide</label>
+                        <div class="bg-light p-2 rounded small">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Excellent (90-100):</span>
+                                <span class="text-success">Outstanding innovation & impact</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Good (70-89):</span>
+                                <span class="text-primary">Strong concept with good potential</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Average (50-69):</span>
+                                <span class="text-warning">Decent effort, needs improvement</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Below Average (0-49):</span>
+                                <span class="text-danger">Significant improvements needed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="feedback" class="form-label">
+                        <i class="fas fa-comment me-2"></i>Detailed Feedback
+                    </label>
+                    {{ form.feedback(class="form-control", rows="6", placeholder="Provide constructive feedback on the submission, including strengths, areas for improvement, and suggestions for future work.") }}
+                    {% if form.feedback.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.feedback.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="form-text">
+                        <small>Your feedback will help the participant improve their climate action initiatives.</small>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Evaluation Guidelines:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Consider the innovation and creativity of the solution</li>
+                        <li>Assess the feasibility and practicality of implementation</li>
+                        <li>Evaluate the potential environmental impact</li>
+                        <li>Look for evidence-based approaches and data usage</li>
+                        <li>Consider the clarity and quality of presentation</li>
+                    </ul>
+                </div>
+                
+                <div class="d-flex gap-3">
+                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                    <a href="{{ url_for('admin_submissions') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Submissions
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        {% if submission.is_evaluated %}
+            <div class="dashboard-card">
+                <h4><i class="fas fa-history me-2"></i>Current Evaluation</h4>
+                <div class="text-center mb-3">
+                    <h2 class="text-primary">{{ submission.score }}/100</h2>
+                    <p class="text-muted">
+                        Evaluated by {{ submission.evaluator.admin_name if submission.evaluator else 'Unknown' }}<br>
+                        {{ submission.evaluation_date.strftime('%B %d, %Y at %I:%M %p') if submission.evaluation_date else 'Unknown date' }}
+                    </p>
+                </div>
+                {% if submission.feedback %}
+                    <div class="bg-light p-3 rounded">
+                        <h6>Previous Feedback:</h6>
+                        <p class="mb-0 small">{{ submission.feedback }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div class="dashboard-card">
+            <h4><i class="fas fa-user-graduate me-2"></i>Participant Info</h4>
+            <div class="mt-3">
+                <p><strong>Name:</strong> {{ submission.user.student_name }}</p>
+                <p><strong>Grade:</strong> {{ submission.user.grade }}</p>
+                <p><strong>Email:</strong> {{ submission.user.email }}</p>
+                <p><strong>Phone:</strong> {{ submission.user.phone }}</p>
+                <hr>
+                <p><strong>School:</strong> {{ submission.school.name }}</p>
+                <p><strong>Location:</strong> {{ submission.school.city }}, {{ submission.school.state }}</p>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <h4><i class="fas fa-chart-bar me-2"></i>Participant's Performance</h4>
+            <div class="mt-3">
+                {% set user_submissions = submission.user.submissions %}
+                <p><strong>Total Submissions:</strong> {{ user_submissions|length }}</p>
+                <p><strong>Evaluated:</strong> {{ user_submissions|selectattr('is_evaluated')|list|length }}</p>
+                <p><strong>Average Score:</strong> 
+                    {% set evaluated_submissions = user_submissions|selectattr('is_evaluated')|list %}
+                    {% if evaluated_submissions|length > 0 %}
+                        {{ (evaluated_submissions|map(attribute='score')|sum / evaluated_submissions|length)|round(1) }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

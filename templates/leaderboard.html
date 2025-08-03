@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard - Climate Champion Programme{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-5">
+            <h1><i class="fas fa-trophy me-3"></i>Climate Champions Leaderboard</h1>
+            <p class="lead">Celebrating our environmental heroes and their contributions</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="dashboard-card">
+            <h3 class="mb-4"><i class="fas fa-school me-2"></i>Top Schools</h3>
+            {% if school_scores %}
+                <div class="table-responsive">
+                    <table class="table leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>School Name</th>
+                                <th>Submissions</th>
+                                <th>Total Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for school in school_scores %}
+                                <tr>
+                                    <td>
+                                        {% if loop.index == 1 %}
+                                            <div class="rank-badge rank-1">{{ loop.index }}</div>
+                                        {% elif loop.index == 2 %}
+                                            <div class="rank-badge rank-2">{{ loop.index }}</div>
+                                        {% elif loop.index == 3 %}
+                                            <div class="rank-badge rank-3">{{ loop.index }}</div>
+                                        {% else %}
+                                            <div class="rank-badge rank-other">{{ loop.index }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ school.name }}</strong>
+                                        {% if loop.index <= 3 %}
+                                            <i class="fas fa-star text-warning ms-2"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ school.submission_count }}</td>
+                                    <td><strong>{{ school.total_score or 0 }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-trophy feature-icon text-muted"></i>
+                    <h5 class="text-muted">No evaluated submissions yet</h5>
+                    <p class="text-muted">Schools will appear here once submissions are evaluated.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="dashboard-card">
+            <h3 class="mb-4"><i class="fas fa-user-graduate me-2"></i>Top Participants</h3>
+            {% if participant_scores %}
+                <div class="table-responsive">
+                    <table class="table leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Participant</th>
+                                <th>School</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for participant in participant_scores %}
+                                <tr>
+                                    <td>
+                                        {% if loop.index == 1 %}
+                                            <div class="rank-badge rank-1">{{ loop.index }}</div>
+                                        {% elif loop.index == 2 %}
+                                            <div class="rank-badge rank-2">{{ loop.index }}</div>
+                                        {% elif loop.index == 3 %}
+                                            <div class="rank-badge rank-3">{{ loop.index }}</div>
+                                        {% else %}
+                                            <div class="rank-badge rank-other">{{ loop.index }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ participant.student_name }}</strong>
+                                        {% if loop.index <= 3 %}
+                                            <i class="fas fa-star text-warning ms-2"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ participant.school_name }}</small></td>
+                                    <td><strong>{{ participant.total_score or 0 }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-user-graduate feature-icon text-muted"></i>
+                    <h5 class="text-muted">No evaluated submissions yet</h5>
+                    <p class="text-muted">Participants will appear here once submissions are evaluated.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if school_scores or participant_scores %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-success text-center">
+            <h4><i class="fas fa-leaf me-2"></i>Climate Action Champions!</h4>
+            <p class="mb-0">These outstanding participants and schools are leading the way in climate awareness and action. 
+            Keep up the excellent work in creating a sustainable future for our planet!</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
